@@ -19,6 +19,7 @@ const SidebarWrapper = styled.div`
 `;
 
 const Header = styled.span`
+  font-family: "Roboto", sans-serif;
   position: relative;
   height: 70px;
   text-align: center;
@@ -33,6 +34,7 @@ const Body = styled.div`
   flex-grow: 1;
   width: 100%;
   background-color: #f8f8f8;
+  font-family: "Roboto", sans-serif;
 `;
 
 const Button = styled.button`
@@ -58,18 +60,39 @@ const CloseIcon = styled.img`
   height: 20px;
 `;
 
+const getBody = (content) => {
+  switch (content) {
+    case "notes":
+      return <Notes />;
+    case "Apple":
+      console.log("apples");
+      break;
+    default:
+      return <Notes />;
+  }
+};
+
 const App = () => {
   const [showApp, setShowApp] = useState(false);
+  const [content, setContent] = useState("notes");
   const src = chrome.runtime.getURL(`icons/close.png`);
   const buttonText = "<";
+
   return showApp ? (
     <SidebarWrapper>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+        rel="stylesheet"
+      />
       <Header>
         <CloseIcon src={src} alt="close" onClick={() => setShowApp(false)} />
         Tim's Dashboard
       </Header>
       <Body>
-        <Notes />
+        {getBody(content)}
+        {/* <Notes /> */}
       </Body>
     </SidebarWrapper>
   ) : (

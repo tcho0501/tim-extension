@@ -50842,7 +50842,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.addNoteFirebase = addNoteFirebase;
-exports.setNotesFirebase = void 0;
+exports.addNotesSectionFirebase = exports.setNotesSectionsFirebase = exports.setNotesFirebase = void 0;
 
 var _database = require("firebase/database");
 
@@ -50860,10 +50860,31 @@ var setNotesFirebase = function setNotesFirebase(setNotes) {
 
 exports.setNotesFirebase = setNotesFirebase;
 
+var setNotesSectionsFirebase = function setNotesSectionsFirebase(setNotesSections) {
+  var db = (0, _database.getDatabase)();
+  var notesRef = (0, _database.ref)(db, "notesSections/");
+  (0, _database.onValue)(notesRef, function (snapshot) {
+    var data = snapshot.val();
+
+    if (data) {
+      setNotesSections(Object.keys(data));
+    }
+  });
+};
+
+exports.setNotesSectionsFirebase = setNotesSectionsFirebase;
+
 function addNoteFirebase(noteId, note, section) {
   var db = (0, _database.getDatabase)();
   (0, _database.set)((0, _database.ref)(db, "notes/".concat(section, "/") + noteId), note);
 }
+
+var addNotesSectionFirebase = function addNotesSectionFirebase(section) {
+  var db = (0, _database.getDatabase)();
+  (0, _database.set)((0, _database.ref)(db, "notesSections/".concat(section)), true);
+};
+
+exports.addNotesSectionFirebase = addNotesSectionFirebase;
 },{"firebase/database":"../../node_modules/firebase/database/dist/index.esm.js"}],"components/Notes.jsx":[function(require,module,exports) {
 "use strict";
 
@@ -50878,7 +50899,7 @@ var _notesActions = require("../actions/notesActions");
 
 var _styledComponents = _interopRequireDefault(require("styled-components"));
 
-var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14;
+var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -50902,46 +50923,65 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
 var Wrapper = _styledComponents.default.div(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n  height: 100%;\n  display: flex; \n  flex-direction: column;\n"])));
 
-var NoteCardsWrapper = _styledComponents.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n flex-grow: 1;\n background-color: #D3D3D3;\n padding: 10px;\n border-radius: 0 0 5px 5px;\n"])));
+var NoteCardsWrapper = _styledComponents.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n flex-grow: 1;\n background-color: #D3D3D3;\n padding: 10px;\n border-radius: 0 0 5px 5px;\n text-align: center;\n"])));
 
-var SectionsWrapper = _styledComponents.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n flex-grow: 1;\n background-color: #D46146;\n padding: 10px;\n"])));
+var SectionsWrapper = _styledComponents.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n  flex-grow: 1;\n  background-color: #D46146;\n  padding: 10px;\n  overflow-y: scroll;\n  flex-basis: 0;\n  ::-webkit-scrollbar {\n    width: 5px;\n    background: #D46146;\n  }\n  ::-webkit-scrollbar-thumb {\n    background: #E9D35C;\n  }\n"])));
 
-var NoteCardWrapper = _styledComponents.default.div(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n  background-color: #F8F8F8;\n  border-radius: 5px;\n  margin-bottom: 10px;\n  padding: 5px 10px;\n  white-space: pre-wrap;\n"])));
+var NoteCardWrapper = _styledComponents.default.div(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n  background-color: #F8F8F8;\n  border-radius: 5px;\n  margin-bottom: 10px;\n  padding: 5px 10px;\n  white-space: pre-wrap;\n  text-align: left;\n  position: relative;\n"])));
 
 var TextAreaWrapper = _styledComponents.default.div(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n  height: 100%;\n  padding: 10px;\n  display: flex;\n"])));
 
-var NoteInputTextArea = _styledComponents.default.textarea(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n  height: 100%;\n  flex-grow: 1;\n  resize: none;\n"])));
+var NoteInputTextArea = _styledComponents.default.textarea(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n  flex-grow: 1;\n  resize: none;\n"])));
 
 var NoteInputWrapper = _styledComponents.default.div(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n  height: 20vh;\n  display: flex;\n  flex-direction: column;\n  background-color: #5F6A91;\n"])));
 
-var EnterButtonWrapper = _styledComponents.default.div(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n  width 100%;\n  display: flex;\n  flex-direction: row-reverse;\n  padding-right: 10px;\n  padding-bottom: 10px;\n  padding-top: 10px;\n"])));
+var EnterButton = _styledComponents.default.button(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n  margin-right: 10px;\n  padding: 2px 5px;\n  font-size: 12px;\n  line-height: 12px;\n  background-color: #E9D35C;\n  color: #5F6A91;\n  cursor: pointer;\n  border: none;\n  white-space: pre-wrap;\n  :hover {\n    background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0 0);\n  }\n"])));
 
-var EnterButton = _styledComponents.default.button(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n  margin-right: 10px;\n  width: 50px;\n  height: 20px;\n  background-color: #E9D35C;\n  color: #5F6A91;\n  cursor: pointer;\n"])));
+var DeleteIcon = _styledComponents.default.img(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n  ", "\n  position: absolute;\n  top: 5px;\n  right: 5px;\n  cursor: pointer;\n"])), function (props) {
+  return props.showIcon ? "" : "display: none;";
+});
 
 var NoteCard = function NoteCard(_ref) {
-  var content = _ref.content;
-  return /*#__PURE__*/_react.default.createElement(NoteCardWrapper, null, content);
+  var content = _ref.content,
+      id = _ref.id,
+      deleteNote = _ref.deleteNote;
+
+  var _useState = (0, _react.useState)(false),
+      _useState2 = _slicedToArray(_useState, 2),
+      showIcon = _useState2[0],
+      setShowIcon = _useState2[1];
+
+  return /*#__PURE__*/_react.default.createElement(NoteCardWrapper, {
+    onMouseEnter: function onMouseEnter(e) {
+      setShowIcon(true);
+    },
+    onMouseLeave: function onMouseLeave(e) {
+      setShowIcon(false);
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: "inline"
+    }
+  }, content), /*#__PURE__*/_react.default.createElement(DeleteIcon, {
+    onClick: function onClick() {
+      deleteNote(id);
+    },
+    showIcon: showIcon,
+    src: chrome.runtime.getURL("icons/delete.png"),
+    alt: "delete"
+  }));
 };
 
 var NoteInput = function NoteInput(_ref2) {
   var appendNote = _ref2.appendNote;
 
-  var _useState = (0, _react.useState)(''),
-      _useState2 = _slicedToArray(_useState, 2),
-      input = _useState2[0],
-      setInput = _useState2[1];
+  var _useState3 = (0, _react.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      input = _useState4[0],
+      setInput = _useState4[1];
 
   var handleChange = function handleChange(event) {
     setInput(event.target.value);
-  };
-
-  var handleClick = function handleClick() {
-    var newNote = {
-      deleted: false,
-      content: input
-    };
-    appendNote(newNote);
-    setInput('');
   };
 
   var handleKeyDown = function handleKeyDown(evt) {
@@ -50960,9 +51000,7 @@ var NoteInput = function NoteInput(_ref2) {
     value: input,
     onChange: handleChange,
     onKeyDown: handleKeyDown
-  })), /*#__PURE__*/_react.default.createElement(EnterButtonWrapper, null, /*#__PURE__*/_react.default.createElement(EnterButton, {
-    onClick: handleClick
-  }, "Enter")));
+  })));
 };
 
 var ClosedSectionWrapper = _styledComponents.default.div(_templateObject10 || (_templateObject10 = _taggedTemplateLiteral(["\n  display: flex;\n  flex-direction: row;\n  color: #F8F8F8;\n  background-color: #5F6A91;\n  line-height: 1.2rem;\n  font-size: 1.2rem;\n  padding: 10px;\n  border-radius: 5px;\n  margin-bottom: 10px;\n"])));
@@ -50977,15 +51015,27 @@ var SectionHeaderWrapper = _styledComponents.default.div(_templateObject14 || (_
 
 var Section = function Section(_ref3) {
   var section = _ref3.section,
-      notes = _ref3.notes,
+      sectionNotes = _ref3.sectionNotes,
       open = _ref3.open,
-      handleSectionClick = _ref3.handleSectionClick;
-  console.log(section, notes);
-  console.log("open?", open);
-  return /*#__PURE__*/_react.default.createElement("div", null, open ? /*#__PURE__*/_react.default.createElement(OpenSectionWrapper, null, /*#__PURE__*/_react.default.createElement(SectionHeaderWrapper, null, /*#__PURE__*/_react.default.createElement(SectionTitle, null, section)), /*#__PURE__*/_react.default.createElement(NoteCardsWrapper, null, notes.map(function (note, i) {
-    return /*#__PURE__*/_react.default.createElement(NoteCard, {
+      handleSectionClick = _ref3.handleSectionClick,
+      setNotes = _ref3.setNotes,
+      notes = _ref3.notes;
+
+  var deleteNote = function deleteNote(id) {
+    console.log('deleting', section, id);
+    var newNotes = JSON.parse(JSON.stringify(notes));
+    var newSection = sectionNotes;
+    newSection[id].deleted = true;
+    newNotes[section] = newSection;
+    setNotes(newNotes);
+  };
+
+  return /*#__PURE__*/_react.default.createElement("div", null, open ? /*#__PURE__*/_react.default.createElement(OpenSectionWrapper, null, /*#__PURE__*/_react.default.createElement(SectionHeaderWrapper, null, /*#__PURE__*/_react.default.createElement(SectionTitle, null, section)), /*#__PURE__*/_react.default.createElement(NoteCardsWrapper, null, sectionNotes.length === 0 ? "add some notes!" : sectionNotes.map(function (note, i) {
+    return note.deleted ? null : /*#__PURE__*/_react.default.createElement(NoteCard, {
       key: i,
-      content: note.content
+      id: i,
+      content: note.content,
+      deleteNote: deleteNote
     });
   }))) : /*#__PURE__*/_react.default.createElement(ClosedSectionWrapper, null, /*#__PURE__*/_react.default.createElement(SectionTitle, null, section), /*#__PURE__*/_react.default.createElement(SectionDropdown, {
     onClick: function onClick() {
@@ -50994,27 +51044,87 @@ var Section = function Section(_ref3) {
   }, "V")));
 };
 
-var Notes = function Notes() {
-  var _useState3 = (0, _react.useState)({}),
-      _useState4 = _slicedToArray(_useState3, 2),
-      notes = _useState4[0],
-      setNotes = _useState4[1];
+var NotesHeaderWrapper = _styledComponents.default.div(_templateObject15 || (_templateObject15 = _taggedTemplateLiteral(["\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  background-color: #D46146;\n  padding: 5px;\n"])));
 
-  var _useState5 = (0, _react.useState)("General"),
+var NotesHeaderText = _styledComponents.default.div(_templateObject16 || (_templateObject16 = _taggedTemplateLiteral(["\n  white-space: pre-wrap; \n  flex-grow: 1;\n  padding-left: 5px;\n  text-align: left;\n"])));
+
+var SectionInputWrapper = _styledComponents.default.div(_templateObject17 || (_templateObject17 = _taggedTemplateLiteral(["\n  height: 20px;\n  display: flex;\n  flex-direction: row;\n"])));
+
+var NotesHeader = function NotesHeader(_ref4) {
+  var currentOpen = _ref4.currentOpen;
+
+  var _useState5 = (0, _react.useState)(""),
       _useState6 = _slicedToArray(_useState5, 2),
-      currentOpen = _useState6[0],
-      setCurrentOpen = _useState6[1];
+      newSectionInput = _useState6[0],
+      setNewSectionInput = _useState6[1];
 
-  var sections = Object.keys(notes);
+  var _useState7 = (0, _react.useState)(false),
+      _useState8 = _slicedToArray(_useState7, 2),
+      openNewSectionInput = _useState8[0],
+      setOpenNewSectionInput = _useState8[1];
+
+  var buttonText = openNewSectionInput ? "x" : "New Section";
+
+  var handleChange = function handleChange(event) {
+    setNewSectionInput(event.target.value);
+  };
+
+  var handleKeyDown = function handleKeyDown(evt) {
+    if (evt.keyCode == 13) {
+      evt.preventDefault();
+      (0, _notesActions.addNotesSectionFirebase)(newSectionInput); // set notes section local
+
+      setNewSectionInput('');
+    }
+  };
+
+  var handleClick = function handleClick() {
+    setOpenNewSectionInput(!openNewSectionInput);
+  };
+
+  return /*#__PURE__*/_react.default.createElement(NotesHeaderWrapper, null, /*#__PURE__*/_react.default.createElement(NotesHeaderText, null, "Writing to: ", /*#__PURE__*/_react.default.createElement("b", null, currentOpen)), openNewSectionInput ? /*#__PURE__*/_react.default.createElement(SectionInputWrapper, null, /*#__PURE__*/_react.default.createElement("input", {
+    value: newSectionInput,
+    onChange: handleChange,
+    onKeyDown: handleKeyDown
+  }), /*#__PURE__*/_react.default.createElement(EnterButton, {
+    onClick: handleClick
+  }, buttonText)) : /*#__PURE__*/_react.default.createElement(EnterButton, {
+    onClick: handleClick
+  }, buttonText));
+};
+
+var Notes = function Notes() {
+  var _useState9 = (0, _react.useState)({}),
+      _useState10 = _slicedToArray(_useState9, 2),
+      notes = _useState10[0],
+      setNotes = _useState10[1];
+
+  var _useState11 = (0, _react.useState)("General"),
+      _useState12 = _slicedToArray(_useState11, 2),
+      currentOpen = _useState12[0],
+      setCurrentOpen = _useState12[1];
+
+  var _useState13 = (0, _react.useState)([]),
+      _useState14 = _slicedToArray(_useState13, 2),
+      notesSections = _useState14[0],
+      setNotesSections = _useState14[1];
+
   (0, _react.useEffect)(function () {
     (0, _notesActions.setNotesFirebase)(setNotes);
+    (0, _notesActions.setNotesSectionsFirebase)(setNotesSections);
   }, []);
 
   var appendNote = function appendNote(note) {
     console.log('trying to add note to:', currentOpen);
     console.log(note);
     var newNotes = JSON.parse(JSON.stringify(notes));
-    newNotes[currentOpen].push(note);
+
+    if (newNotes[currentOpen]) {
+      newNotes[currentOpen].push(note);
+    } else {
+      newNotes[currentOpen] = [note];
+    }
+
     setNotes(newNotes);
     (0, _notesActions.addNoteFirebase)((newNotes[currentOpen].length - 1).toString(), note, currentOpen);
   };
@@ -51023,14 +51133,18 @@ var Notes = function Notes() {
     setCurrentOpen(section);
   };
 
-  console.log('NOTES', notes);
-  return /*#__PURE__*/_react.default.createElement(Wrapper, null, /*#__PURE__*/_react.default.createElement(SectionsWrapper, null, sections.map(function (section, i) {
+  console.log("Notes:", notes);
+  return /*#__PURE__*/_react.default.createElement(Wrapper, null, /*#__PURE__*/_react.default.createElement(NotesHeader, {
+    currentOpen: currentOpen
+  }), /*#__PURE__*/_react.default.createElement(SectionsWrapper, null, notesSections.map(function (section, i) {
     return /*#__PURE__*/_react.default.createElement(Section, {
       key: i,
       open: currentOpen === section,
       section: section,
-      notes: notes[section] || [],
-      handleSectionClick: handleSectionClick
+      sectionNotes: notes[section] || [],
+      handleSectionClick: handleSectionClick,
+      setNotes: setNotes,
+      notes: notes
     });
   })), /*#__PURE__*/_react.default.createElement(NoteInput, {
     appendNote: appendNote
@@ -51148,13 +51262,27 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
 var SidebarWrapper = _styledComponents.default.div(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n  height: 100vh;\n  position: fixed;\n  width: 30vw;\n  right: 0;\n  top: 0;\n  z-index: 9999;\n  background-color: white;\n  color: black;\n  border-left: solid gray 1px;\n  display: flex;\n  flex-direction: column;\n"])));
 
-var Header = _styledComponents.default.span(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n  position: relative;\n  height: 70px;\n  text-align: center;\n  width: 100%;\n  background-color: #3e3e56;\n  color: #f8f8f8;\n  font-size: 1.5rem;\n  line-height: 70px;\n"])));
+var Header = _styledComponents.default.span(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n  font-family: \"Roboto\", sans-serif;\n  position: relative;\n  height: 70px;\n  text-align: center;\n  width: 100%;\n  background-color: #3e3e56;\n  color: #f8f8f8;\n  font-size: 1.5rem;\n  line-height: 70px;\n"])));
 
-var Body = _styledComponents.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n  flex-grow: 1;\n  width: 100%;\n  background-color: #f8f8f8;\n"])));
+var Body = _styledComponents.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n  flex-grow: 1;\n  width: 100%;\n  background-color: #f8f8f8;\n  font-family: \"Roboto\", sans-serif;\n"])));
 
 var Button = _styledComponents.default.button(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n  position: fixed;\n  top: 50vh;\n  right: 0;\n  background-color: #3e3e56;\n  color: #f8f8f8;\n  cursor: pointer;\n  z-index: 9999;\n  height: 40px;\n  width: 40px;\n  font-size: 1.5rem;\n  border-radius: 5px 0 0 5px;\n"])));
 
 var CloseIcon = _styledComponents.default.img(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n  cursor: pointer;\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  width: 20px;\n  height: 20px;\n"])));
+
+var getBody = function getBody(content) {
+  switch (content) {
+    case "notes":
+      return /*#__PURE__*/_react.default.createElement(_Notes.default, null);
+
+    case "Apple":
+      console.log("apples");
+      break;
+
+    default:
+      return /*#__PURE__*/_react.default.createElement(_Notes.default, null);
+  }
+};
 
 var App = function App() {
   var _useState = (0, _react.useState)(false),
@@ -51162,15 +51290,30 @@ var App = function App() {
       showApp = _useState2[0],
       setShowApp = _useState2[1];
 
+  var _useState3 = (0, _react.useState)("notes"),
+      _useState4 = _slicedToArray(_useState3, 2),
+      content = _useState4[0],
+      setContent = _useState4[1];
+
   var src = chrome.runtime.getURL("icons/close.png");
   var buttonText = "<";
-  return showApp ? /*#__PURE__*/_react.default.createElement(SidebarWrapper, null, /*#__PURE__*/_react.default.createElement(Header, null, /*#__PURE__*/_react.default.createElement(CloseIcon, {
+  return showApp ? /*#__PURE__*/_react.default.createElement(SidebarWrapper, null, /*#__PURE__*/_react.default.createElement("link", {
+    rel: "preconnect",
+    href: "https://fonts.googleapis.com"
+  }), /*#__PURE__*/_react.default.createElement("link", {
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossorigin: true
+  }), /*#__PURE__*/_react.default.createElement("link", {
+    href: "https://fonts.googleapis.com/css2?family=Roboto&display=swap",
+    rel: "stylesheet"
+  }), /*#__PURE__*/_react.default.createElement(Header, null, /*#__PURE__*/_react.default.createElement(CloseIcon, {
     src: src,
     alt: "close",
     onClick: function onClick() {
       return setShowApp(false);
     }
-  }), "Tim's Dashboard"), /*#__PURE__*/_react.default.createElement(Body, null, /*#__PURE__*/_react.default.createElement(_Notes.default, null))) : /*#__PURE__*/_react.default.createElement(Button, {
+  }), "Tim's Dashboard"), /*#__PURE__*/_react.default.createElement(Body, null, getBody(content))) : /*#__PURE__*/_react.default.createElement(Button, {
     onClick: function onClick() {
       return setShowApp(true);
     }

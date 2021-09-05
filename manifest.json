@@ -23,8 +23,8 @@
     }
   ],
   "web_accessible_resources": [
-    "icons/close.png"
+    "icons/close.png",
+    "icons/delete.png"
   ]
-    
   
 }
