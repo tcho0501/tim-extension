@@ -50860,9 +50860,9 @@ var setNotesFirebase = function setNotesFirebase(setNotes) {
 
 exports.setNotesFirebase = setNotesFirebase;
 
-function addNoteFirebase(noteId, note) {
+function addNoteFirebase(noteId, note, section) {
   var db = (0, _database.getDatabase)();
-  (0, _database.set)((0, _database.ref)(db, "notes/" + noteId), note);
+  (0, _database.set)((0, _database.ref)(db, "notes/".concat(section, "/") + noteId), note);
 }
 },{"firebase/database":"../../node_modules/firebase/database/dist/index.esm.js"}],"components/Notes.jsx":[function(require,module,exports) {
 "use strict";
@@ -50878,21 +50878,13 @@ var _notesActions = require("../actions/notesActions");
 
 var _styledComponents = _interopRequireDefault(require("styled-components"));
 
-var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8;
+var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -50910,24 +50902,26 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
 var Wrapper = _styledComponents.default.div(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n  height: 100%;\n  display: flex; \n  flex-direction: column;\n"])));
 
-var NoteCardsWrapper = _styledComponents.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n flex-grow: 1;\n background-color: #D46146;\n padding: 10px;\n"])));
+var NoteCardsWrapper = _styledComponents.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n flex-grow: 1;\n background-color: #D3D3D3;\n padding: 10px;\n border-radius: 0 0 5px 5px;\n"])));
 
-var NoteCardWrapper = _styledComponents.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n  background-color: #F8F8F8;\n  border-radius: 5px;\n  margin-bottom: 10px;\n  padding: 5px 10px;\n  white-space: pre-wrap;\n"])));
+var SectionsWrapper = _styledComponents.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n flex-grow: 1;\n background-color: #D46146;\n padding: 10px;\n"])));
+
+var NoteCardWrapper = _styledComponents.default.div(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n  background-color: #F8F8F8;\n  border-radius: 5px;\n  margin-bottom: 10px;\n  padding: 5px 10px;\n  white-space: pre-wrap;\n"])));
+
+var TextAreaWrapper = _styledComponents.default.div(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n  height: 100%;\n  padding: 10px;\n  display: flex;\n"])));
+
+var NoteInputTextArea = _styledComponents.default.textarea(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n  height: 100%;\n  flex-grow: 1;\n  resize: none;\n"])));
+
+var NoteInputWrapper = _styledComponents.default.div(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n  height: 20vh;\n  display: flex;\n  flex-direction: column;\n  background-color: #5F6A91;\n"])));
+
+var EnterButtonWrapper = _styledComponents.default.div(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n  width 100%;\n  display: flex;\n  flex-direction: row-reverse;\n  padding-right: 10px;\n  padding-bottom: 10px;\n  padding-top: 10px;\n"])));
+
+var EnterButton = _styledComponents.default.button(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n  margin-right: 10px;\n  width: 50px;\n  height: 20px;\n  background-color: #E9D35C;\n  color: #5F6A91;\n  cursor: pointer;\n"])));
 
 var NoteCard = function NoteCard(_ref) {
   var content = _ref.content;
   return /*#__PURE__*/_react.default.createElement(NoteCardWrapper, null, content);
 };
-
-var TextAreaWrapper = _styledComponents.default.div(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n  height: 100%;\n  padding: 10px;\n  display: flex;\n"])));
-
-var NoteInputTextArea = _styledComponents.default.textarea(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n  height: 100%;\n  flex-grow: 1;\n  resize: none;\n"])));
-
-var NoteInputWrapper = _styledComponents.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n  height: 20vh;\n  display: flex;\n  flex-direction: column;\n  background-color: #5F6A91;\n"])));
-
-var EnterButtonWrapper = _styledComponents.default.div(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n  width 100%;\n  display: flex;\n  flex-direction: row-reverse;\n  padding-right: 10px;\n  padding-bottom: 10px;\n  padding-top: 10px;\n"])));
-
-var EnterButton = _styledComponents.default.button(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n  margin-right: 10px;\n  width: 50px;\n  height: 20px;\n  background-color: #E9D35C;\n  color: #5F6A91;\n  cursor: pointer;\n"])));
 
 var NoteInput = function NoteInput(_ref2) {
   var appendNote = _ref2.appendNote;
@@ -50971,29 +50965,72 @@ var NoteInput = function NoteInput(_ref2) {
   }, "Enter")));
 };
 
+var ClosedSectionWrapper = _styledComponents.default.div(_templateObject10 || (_templateObject10 = _taggedTemplateLiteral(["\n  display: flex;\n  flex-direction: row;\n  color: #F8F8F8;\n  background-color: #5F6A91;\n  line-height: 1.2rem;\n  font-size: 1.2rem;\n  padding: 10px;\n  border-radius: 5px;\n  margin-bottom: 10px;\n"])));
+
+var SectionTitle = _styledComponents.default.div(_templateObject11 || (_templateObject11 = _taggedTemplateLiteral(["\n  flex-grow: 1;\n"])));
+
+var SectionDropdown = _styledComponents.default.div(_templateObject12 || (_templateObject12 = _taggedTemplateLiteral(["\n  width: 20px;\n  cursor: pointer;\n"])));
+
+var OpenSectionWrapper = _styledComponents.default.div(_templateObject13 || (_templateObject13 = _taggedTemplateLiteral(["\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 10px;\n"])));
+
+var SectionHeaderWrapper = _styledComponents.default.div(_templateObject14 || (_templateObject14 = _taggedTemplateLiteral(["\n  background-color: #5F6A91;\n  line-height: 1.2rem;\n  font-size: 1.2rem;\n  border-radius: 5px 5px 0 0;\n  display: flex;\n  flex-direction: row;\n  color: #F8F8F8;\n  padding: 10px;\n"])));
+
+var Section = function Section(_ref3) {
+  var section = _ref3.section,
+      notes = _ref3.notes,
+      open = _ref3.open,
+      handleSectionClick = _ref3.handleSectionClick;
+  console.log(section, notes);
+  console.log("open?", open);
+  return /*#__PURE__*/_react.default.createElement("div", null, open ? /*#__PURE__*/_react.default.createElement(OpenSectionWrapper, null, /*#__PURE__*/_react.default.createElement(SectionHeaderWrapper, null, /*#__PURE__*/_react.default.createElement(SectionTitle, null, section)), /*#__PURE__*/_react.default.createElement(NoteCardsWrapper, null, notes.map(function (note, i) {
+    return /*#__PURE__*/_react.default.createElement(NoteCard, {
+      key: i,
+      content: note.content
+    });
+  }))) : /*#__PURE__*/_react.default.createElement(ClosedSectionWrapper, null, /*#__PURE__*/_react.default.createElement(SectionTitle, null, section), /*#__PURE__*/_react.default.createElement(SectionDropdown, {
+    onClick: function onClick() {
+      return handleSectionClick(section);
+    }
+  }, "V")));
+};
+
 var Notes = function Notes() {
-  var _useState3 = (0, _react.useState)([]),
+  var _useState3 = (0, _react.useState)({}),
       _useState4 = _slicedToArray(_useState3, 2),
       notes = _useState4[0],
       setNotes = _useState4[1];
 
+  var _useState5 = (0, _react.useState)("General"),
+      _useState6 = _slicedToArray(_useState5, 2),
+      currentOpen = _useState6[0],
+      setCurrentOpen = _useState6[1];
+
+  var sections = Object.keys(notes);
   (0, _react.useEffect)(function () {
     (0, _notesActions.setNotesFirebase)(setNotes);
   }, []);
 
   var appendNote = function appendNote(note) {
-    var newNotes = _toConsumableArray(notes);
-
-    newNotes.push(note);
+    console.log('trying to add note to:', currentOpen);
+    console.log(note);
+    var newNotes = JSON.parse(JSON.stringify(notes));
+    newNotes[currentOpen].push(note);
     setNotes(newNotes);
-    (0, _notesActions.addNoteFirebase)((newNotes.length - 1).toString(), note);
+    (0, _notesActions.addNoteFirebase)((newNotes[currentOpen].length - 1).toString(), note, currentOpen);
+  };
+
+  var handleSectionClick = function handleSectionClick(section) {
+    setCurrentOpen(section);
   };
 
   console.log('NOTES', notes);
-  return /*#__PURE__*/_react.default.createElement(Wrapper, null, /*#__PURE__*/_react.default.createElement(NoteCardsWrapper, null, notes.map(function (note, i) {
-    return /*#__PURE__*/_react.default.createElement(NoteCard, {
+  return /*#__PURE__*/_react.default.createElement(Wrapper, null, /*#__PURE__*/_react.default.createElement(SectionsWrapper, null, sections.map(function (section, i) {
+    return /*#__PURE__*/_react.default.createElement(Section, {
       key: i,
-      content: note.content
+      open: currentOpen === section,
+      section: section,
+      notes: notes[section] || [],
+      handleSectionClick: handleSectionClick
     });
   })), /*#__PURE__*/_react.default.createElement(NoteInput, {
     appendNote: appendNote

@@ -11,7 +11,7 @@ export const setNotesFirebase = (setNotes) => {
   });
 };
 
-export function addNoteFirebase(noteId, note) {
+export function addNoteFirebase(noteId, note, section) {
   const db = getDatabase();
-  set(ref(db, "notes/" + noteId), note);
+  set(ref(db, `notes/${section}/` + noteId), note);
 }
