@@ -31,3 +31,8 @@ export const addNotesSectionFirebase = (section) => {
   const db = getDatabase();
   set(ref(db, `notesSections/${section}`), true);
 };
+
+export const deleteNoteFirebase = (noteId, section) => {
+  const db = getDatabase();
+  set(ref(db, `notes/${section}/${noteId}/deleted`), true);
+};

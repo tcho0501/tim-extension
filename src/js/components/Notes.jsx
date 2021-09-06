@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { addNoteFirebase, setNotesFirebase, setNotesSectionsFirebase, addNotesSectionFirebase } from '../actions/notesActions'
+import { 
+  addNoteFirebase, 
+  setNotesFirebase, 
+  setNotesSectionsFirebase, 
+  addNotesSectionFirebase,
+  deleteNoteFirebase
+} from '../actions/notesActions'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -166,12 +172,13 @@ const SectionHeaderWrapper = styled.div`
 const Section = ({section, sectionNotes, open, handleSectionClick, setNotes, notes}) => {
 
   const deleteNote = (id) => {
-    console.log('deleting', section, id)
     const newNotes = JSON.parse(JSON.stringify(notes))
     const newSection = sectionNotes
     newSection[id].deleted = true
     newNotes[section] = newSection
     setNotes(newNotes)
+    // delete note in firebase
+    deleteNoteFirebase(id.toString(), section)
   }
   return (
   <div>
@@ -273,8 +280,6 @@ const Notes = () => {
   }, [])
 
   const appendNote = (note) => {
-    console.log('trying to add note to:', currentOpen)
-    console.log(note)
     const newNotes = JSON.parse(JSON.stringify(notes))
     if (newNotes[currentOpen]) {
       newNotes[currentOpen].push(note)
@@ -289,7 +294,7 @@ const Notes = () => {
   const handleSectionClick = (section) => {
     setCurrentOpen(section)
   }
-  console.log("Notes:", notes)
+  // console.log("Notes:", notes)
   return(
     <Wrapper>
       <NotesHeader currentOpen={currentOpen}/>

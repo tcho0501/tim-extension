@@ -50842,7 +50842,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.addNoteFirebase = addNoteFirebase;
-exports.addNotesSectionFirebase = exports.setNotesSectionsFirebase = exports.setNotesFirebase = void 0;
+exports.deleteNoteFirebase = exports.addNotesSectionFirebase = exports.setNotesSectionsFirebase = exports.setNotesFirebase = void 0;
 
 var _database = require("firebase/database");
 
@@ -50885,6 +50885,13 @@ var addNotesSectionFirebase = function addNotesSectionFirebase(section) {
 };
 
 exports.addNotesSectionFirebase = addNotesSectionFirebase;
+
+var deleteNoteFirebase = function deleteNoteFirebase(noteId, section) {
+  var db = (0, _database.getDatabase)();
+  (0, _database.set)((0, _database.ref)(db, "notes/".concat(section, "/").concat(noteId, "/deleted")), true);
+};
+
+exports.deleteNoteFirebase = deleteNoteFirebase;
 },{"firebase/database":"../../node_modules/firebase/database/dist/index.esm.js"}],"components/Notes.jsx":[function(require,module,exports) {
 "use strict";
 
@@ -51022,12 +51029,13 @@ var Section = function Section(_ref3) {
       notes = _ref3.notes;
 
   var deleteNote = function deleteNote(id) {
-    console.log('deleting', section, id);
     var newNotes = JSON.parse(JSON.stringify(notes));
     var newSection = sectionNotes;
     newSection[id].deleted = true;
     newNotes[section] = newSection;
-    setNotes(newNotes);
+    setNotes(newNotes); // delete note in firebase
+
+    (0, _notesActions.deleteNoteFirebase)(id.toString(), section);
   };
 
   return /*#__PURE__*/_react.default.createElement("div", null, open ? /*#__PURE__*/_react.default.createElement(OpenSectionWrapper, null, /*#__PURE__*/_react.default.createElement(SectionHeaderWrapper, null, /*#__PURE__*/_react.default.createElement(SectionTitle, null, section)), /*#__PURE__*/_react.default.createElement(NoteCardsWrapper, null, sectionNotes.length === 0 ? "add some notes!" : sectionNotes.map(function (note, i) {
@@ -51115,8 +51123,6 @@ var Notes = function Notes() {
   }, []);
 
   var appendNote = function appendNote(note) {
-    console.log('trying to add note to:', currentOpen);
-    console.log(note);
     var newNotes = JSON.parse(JSON.stringify(notes));
 
     if (newNotes[currentOpen]) {
@@ -51131,9 +51137,9 @@ var Notes = function Notes() {
 
   var handleSectionClick = function handleSectionClick(section) {
     setCurrentOpen(section);
-  };
+  }; // console.log("Notes:", notes)
 
-  console.log("Notes:", notes);
+
   return /*#__PURE__*/_react.default.createElement(Wrapper, null, /*#__PURE__*/_react.default.createElement(NotesHeader, {
     currentOpen: currentOpen
   }), /*#__PURE__*/_react.default.createElement(SectionsWrapper, null, notesSections.map(function (section, i) {
